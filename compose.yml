@@ -1,0 +1,71 @@
+version: '3'
+
+name: tcd
+
+services:
+
+  db:
+    image: postgres:16-alpine3.18
+    volumes:
+      - vol_db:/var/lib/postgresql/data
+      - ./images/postgresql/initdb:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_DB=tcd
+      - POSTGRES_USER=tcd
+      - POSTGRES_PASSWORD=ft_password
+
+  dbadmin:
+    build: ./images/adminer
+    image: tcd/adminer
+    ports: [127.0.0.1:8080:80]
+    environment: [QS=pgsql=db]
+
+  backend:
+    build: ./images/django
+    image: tcd/django
+    restart: unless-stopped
+    depends_on: [db]
+    ports: [8800:8000]
+    volumes:
+      - vol_app:/app
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=tcd
+      - POSTGRES_USER=tcd
+      - POSTGRES_PASSWORD=ft_password
+      - OAUTH_URL=https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-888abf99e7a96317ce8952769a0be4b4c4a092bed5f52d27b85ae3b989536a15&redirect_uri=https%3A%2F%2Flocalhost%2Fauth&response_type=code
+
+  frontend:
+    build: ./images/nginx
+    image: tcd/nginx
+    depends_on: [backend]
+    ports: ["443:443"]
+    # volumes:
+    # - wordpress_files:/wordpress:ro
+    # environment:
+    #   SSL_DOMAIN: $DOMAIN
+
+
+  # alpine:
+  #   image: alpine:3.18
+  #   command: sleep infinity
+
+networks:
+  app_net:
+
+volumes:
+  vdir:
+
+  vol_app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./images/django/app
+
+  vol_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/db
