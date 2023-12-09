@@ -8,11 +8,11 @@ services:
     image: postgres:16-alpine3.18
     volumes:
       - vol_db:/var/lib/postgresql/data
-      - ./images/postgresql/initdb:/docker-entrypoint-initdb.d
+      # - ./images/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - POSTGRES_DB=tcd
-      - POSTGRES_USER=tcd
-      - POSTGRES_PASSWORD=ft_password
+      POSTGRES_DB: tcd
+      POSTGRES_USER: tcd
+      POSTGRES_PASSWORD: ft_password
 
   dbadmin:
     build: ./images/adminer
@@ -29,32 +29,23 @@ services:
     volumes:
       - vol_app:/app
     environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_DB=tcd
-      - POSTGRES_USER=tcd
-      - POSTGRES_PASSWORD=ft_password
-      - OAUTH_URL=https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-888abf99e7a96317ce8952769a0be4b4c4a092bed5f52d27b85ae3b989536a15&redirect_uri=https%3A%2F%2Flocalhost%2Fauth&response_type=code
+      POSTGRES_HOST: db
+      POSTGRES_DB: tcd
+      POSTGRES_USER: tcd
+      POSTGRES_PASSWORD: ft_password
+      CLIENT_ID: u-s4t2ud-888abf99e7a96317ce8952769a0be4b4c4a092bed5f52d27b85ae3b989536a15
+      CLIENT_SECRET: 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
+    # command: sleep infinity
 
   frontend:
     build: ./images/nginx
     image: tcd/nginx
     depends_on: [backend]
     ports: ["443:443"]
-    # volumes:
-    # - wordpress_files:/wordpress:ro
     # environment:
     #   SSL_DOMAIN: $DOMAIN
 
-
-  # alpine:
-  #   image: alpine:3.18
-  #   command: sleep infinity
-
-networks:
-  app_net:
-
 volumes:
-  vdir:
 
   vol_app:
     driver: local

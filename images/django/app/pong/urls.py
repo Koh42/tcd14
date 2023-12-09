@@ -16,13 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
-def redirect_view(request):
-    response = redirect('/static/index.html')
-    return response
+from django.shortcuts import redirect, render
+
+def landing_view(request):
+    if request.user.is_authenticated:
+        return render(request, 'private.html')
+    else:
+        return render(request, 'public.html')
+    # return render(request, 'landing.html')
+    # return redirect('/static/index.html')
 
 urlpatterns = [
-    path("", redirect_view),
-    path("auth/", include("auth.urls")),
+    path("", landing_view),
+    path("auth/", include("auth42.urls")),
     path('admin/', admin.site.urls),
 ]
