@@ -1,19 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login, logout as auth_logout
 
 # Create your views here.
-from django.http import HttpResponse
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
-
-from django.shortcuts import redirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from urllib.parse import quote
 import os
 import requests
 
 client_id = os.environ['CLIENT_ID']
 client_secret = os.environ['CLIENT_SECRET']
+hostname = os.environ['HTTP_HOSTNAME']
 
 def login_as(request, username):
     try:
@@ -28,7 +26,7 @@ def login_view(request):
         username = request.GET['mock']
         # TODO: validate username
         login_as(request, username)
-        return redirect("/")
+        return redirect(reverse("home"))
 
     if 'code' in request.GET:
         postdata = {
@@ -36,7 +34,7 @@ def login_view(request):
             'client_id': client_id,
             'client_secret': client_secret,
             'code': request.GET['code'],
-            'redirect_uri': 'https://localhost/auth',
+            'redirect_uri': 'https://' + hostname + reverse('login'),
         }
         try:
             response = requests.post('https://api.intra.42.fr/oauth/token', json=postdata)
@@ -52,18 +50,20 @@ def login_view(request):
                 return redirect(f"/?{request.GET.urlencode()}")
             username = data['login']
             login_as(request, username)
-            return redirect("/")
+            return redirect(reverse("home"))
         except Exception as e:
             return HttpResponse(e)
     
     if 'error_description' in request.GET:
         # user cancels auth
-        # return render(request, 'auth42/message.html', {'type': 'error', 'message': request.GET['error_description']}, status=200)
         return redirect(f"/?{request.GET.urlencode()}")
 
-    auth_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri=https%3A%2F%2Flocalhost%2Fauth&response_type=code'
+    path = quote(reverse('login'), safe='')
+    auth_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&redirect_uri=https%3A%2F%2F{hostname}{path}&response_type=code'
     return redirect(auth_url)
 
+# from django.utils.translation import activate
 def logout_view(request):
     auth_logout(request)
-    return redirect("/")
+    # activate('ms')
+    return redirect(reverse('home'))

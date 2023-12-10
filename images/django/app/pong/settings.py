@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-$+zzh7w56q+_adhrh%76yrqdsvin_o0%@dy%(!$9$s64@53by^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [os.environ['HTTP_HOSTNAME']]
+CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['HTTP_HOSTNAME']]
 
 # Application definition
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -109,13 +110,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("ms", _("Malay")),
+    ("zh-hans", _("Chinese")),
+]
+
+LOCALE_PATHS = [ BASE_DIR / "locale/" ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kuala_Lumpur' #'UTC'
 
 USE_I18N = True
 

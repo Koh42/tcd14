@@ -35,6 +35,7 @@ services:
       POSTGRES_PASSWORD: ft_password
       CLIENT_ID: u-s4t2ud-888abf99e7a96317ce8952769a0be4b4c4a092bed5f52d27b85ae3b989536a15
       CLIENT_SECRET: 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
+      HTTP_HOSTNAME: baa3-27-125-246-141.ngrok-free.app
     # command: sleep infinity
 
   frontend:

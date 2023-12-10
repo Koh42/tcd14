@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
   <head>
@@ -164,14 +164,17 @@
               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
               <button class="btn btn-outline-success" type="submit">Search</button>
             </form> -->
-            <span class="nav-item dropdown">
+            <span class="nav-item dropdown me-2">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Hi {{ user.username }}
+                   {% blocktranslate with name=user.username %}Hello {{name}}{% endblocktranslate %}
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">{% translate "Logout" %}</a></li>
                 </ul>
               </li>
+            </span>
+            <span class="nav-item">
+           {% include 'language.html' %}
             </span>
             <!-- <span class="navbar-text">
               Hi {{ user.username }}

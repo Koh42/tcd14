@@ -146,7 +146,7 @@ body {
         var username = prompt("Username (3-10 alphanumeric character, starts with letter)", "test");
         if (username == null) return;
         if (username.match(/^[a-z]\w{2,9}$/i)) {
-          location.href = "/auth?mock=" + username;
+          location.href = "{% url 'login' %}?mock=" + username;
         } else {
           alert("Invalid username");
         }
@@ -164,6 +164,7 @@ body {
         <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#">Home</a>
         <a class="nav-link fw-bold py-1 px-0" href="#">Features</a>
         <a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
+        <span class="nav-link fw-bold py-1 px-0" href="#">{% include 'language.html' %}</span>
       </nav>
     </div>
   </header>
@@ -172,7 +173,7 @@ body {
     <h1>Cover your page.</h1>
     <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
     <p class="lead">
-      <a href="/auth/" class="btn btn-lg btn-light fw-bold border-white bg-white">42 Login</a>
+      <a href="{% url 'login' %}" class="btn btn-lg btn-light fw-bold border-white bg-white">{{ _("42 Login") }}</a>
       <button onclick="mockLogin()" class="btn btn-lg btn-light fw-bold border-white bg-white">Mock Login</button>
     </p>
   </main>
