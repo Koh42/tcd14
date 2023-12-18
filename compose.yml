@@ -82,6 +82,7 @@ services:
       HTTP_HOSTNAME: unduly-right-sloth.ngrok-free.app
     # command: sleep infinity
 
+  # nginx + modsecurity, slow building modsecurity from source code
   frontend:
     depends_on: [backend]
     build: ./images/nginx
@@ -91,7 +92,7 @@ services:
       - ./images/django/app/static:/static:ro
     # environment:
     #   SSL_DOMAIN: $DOMAIN
-
+    
 volumes:
 
   vol_app:
