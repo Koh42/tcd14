@@ -1,0 +1,32 @@
+#included by compose.yml, trigger by "docker compose --profile development up" or "make dev"
+
+services:
+
+  # for development purpose, not required for production
+  dbadmin:
+    profiles: [development]
+    depends_on: [db]
+    build: ./images/adminer
+    image: tcd/adminer
+    ports: [127.0.0.1:8080:80]
+    environment: [QUERY_STRING=pgsql=db]
+
+  # for team testing via Internet purpose, not required for production
+  ngrok:
+    profiles: [development]
+    depends_on: [backend]
+    image: ngrok/ngrok:3.5.0-alpine
+    # from environmental variables with same name
+    environment:
+      - NGROK_AUTHTOKEN
+    command: tunnel --label edge=$NGROK_EDGE backend:80
+    ports: [127.0.0.1:4040:4040]
+  
+  # todo:
+  vault-agent:
+    profiles: [development]
+    image: alpine:3.19
+    depends_on:
+      vault-operator:
+        condition: service_completed_successfully
+    command: sleep infinity

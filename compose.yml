@@ -2,6 +2,9 @@ version: '3'
 
 name: tcd
 
+include:
+  - development.yml
+
 services:
 
   db:
