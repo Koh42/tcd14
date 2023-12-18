@@ -7,6 +7,51 @@ include:
 
 services:
 
+  # this will be initialized, unsealed, and setup policies by vault-operator
+  vault:
+    image: hashicorp/vault:1.15
+    ports: [8200:8200]
+    cap_add: [IPC_LOCK]
+    volumes:
+      - vol_vault_file:/vault/file
+      - vol_vault_logs:/vault/logs
+    environment:
+      # VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_LOCAL_CONFIG: |
+        {
+          "storage": {
+            "file": {
+              "path": "/vault/file"
+            }
+          },
+          "listener": [
+            {
+              "tcp": {
+                "address": "0.0.0.0:8200",
+                "tls_disable": true
+              }
+            }
+          ],
+          "default_lease_ttl": "168h",
+          "max_lease_ttl": "720h",
+          "ui": true,
+          "api_addr": "http://127.0.0.1:8200"
+        }
+    command: server
+
+  # this will initial vault & keep unseal keys for unsealing, setup policies.
+  # todo: all dependent services should wait for vault-operator completed successfully
+  # todo: all dependent services maybe use vault-agent to get secrets and auto-renew-and-restart
+  vault-operator:
+    depends_on: [vault]
+    image: hashicorp/vault:1.15
+    volumes:
+      - ./scripts/vault-operator.sh:/entrypoint.sh
+      - ./volumes/vault-operator:/vol
+    command: /entrypoint.sh
+    environment:
+      VAULT_ADDR: http://vault:8200
+  
   db:
     image: postgres:16-alpine3.19
     volumes:
@@ -15,6 +60,7 @@ services:
     environment:
       POSTGRES_DB: tcd
       POSTGRES_USER: tcd
+      # new password does not apply once database is initialized
       POSTGRES_PASSWORD: ft_password
 
   backend:
@@ -61,3 +107,20 @@ volumes:
       type: none
       o: bind
       device: ./volumes/db
+
+  vol_vault_file:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/vault_file
+
+  vol_vault_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/vault_logs
+
+networks:
+  default:
