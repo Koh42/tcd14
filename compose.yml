@@ -5,7 +5,7 @@ name: tcd
 services:
 
   db:
-    image: postgres:16-alpine3.18
+    image: postgres:16-alpine3.19
     volumes:
       - vol_db:/var/lib/postgresql/data
       # - ./images/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql

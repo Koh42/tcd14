@@ -1,5 +1,5 @@
 # FROM    python:3.12-alpine3.18
-FROM    alpine:3.18
+FROM    alpine:3.19
 RUN     apk add --no-cache py3-django py3-psycopg2 py3-requests gettext
 WORKDIR /app
 
