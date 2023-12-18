@@ -17,12 +17,6 @@ services:
       POSTGRES_USER: tcd
       POSTGRES_PASSWORD: ft_password
 
-  dbadmin:
-    build: ./images/adminer
-    image: tcd/adminer
-    ports: [127.0.0.1:8080:80]
-    environment: [QS=pgsql=db]
-
   backend:
     build: ./images/django
     image: tcd/django
