@@ -5,9 +5,9 @@ The 42 Core Program final project, ft-transcendence. A modern web based Pong.
 
 ## 1. 42 application Redirect URI
 ```
-https://<REPLACE>/en/auth/
-https://<REPLACE>/ms/auth/
-https://<REPLACE>/zh-hans/auth/
+https://<REPLACE>/auth/
+https://localhost/auth/
+http://127.0.0.1:8000/auth/
 ```
 
 ## 2. edit compose.yml
@@ -95,15 +95,8 @@ urlpatterns += [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/translation/#translating-url-patterns
 from django.urls import reverse
 def logout_view():
-    # for Language prefix URL, eg /<LANG>/path
+    # add Language prefix URL, eg /<LANG>/path, based on django_language cookie
     return redirect(reverse("about"))
-
-# https://docs.djangoproject.com/en/4.2/topics/i18n/translation/#explicitly-setting-the-active-language
-from django.utils import translation
-def malay_view():
-    translation.activate("ms")
-    # salam = translation.gettext("hello")
-    return redirect(reverse("about")) # /ms/about
 ```
 
 ### templates/base.html (using)

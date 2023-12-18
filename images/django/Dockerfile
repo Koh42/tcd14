@@ -12,4 +12,4 @@ WORKDIR /app
 
 CMD     python manage.py migrate \
 &&      django-admin compilemessages \
-&&      python manage.py runserver 0.0.0.0:8000
+&&      python manage.py runserver 0.0.0.0:80

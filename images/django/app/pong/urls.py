@@ -30,9 +30,9 @@ def landing_view(request):
 urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path('admin/', admin.site.urls),
+    path("auth/", include("auth42.urls")),
 ]
 
 urlpatterns += i18n_patterns(
-    path("auth/", include("auth42.urls")),
     path("", landing_view, name="home"),
 )
